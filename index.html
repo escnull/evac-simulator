@@ -15,6 +15,7 @@
     --yellow: #ffe600;
     --green: #00ff88;
     --blue: #00c8ff;
+    --purple: #8855ff;
     --dark: #080c10;
     --panel: rgba(8,14,20,0.92);
     --border: rgba(0,200,255,0.2);
@@ -31,21 +32,277 @@
     width: 100vw;
   }
 
-  #canvas-container {
-    position: absolute;
+  /* ═══════════════════════ SETUP SCREEN ═══════════════════════ */
+  #setup-screen {
+    position: fixed;
     inset: 0;
+    background: #060a0e;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 20px;
   }
 
+  #setup-screen::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,200,255,0.015) 2px, rgba(0,200,255,0.015) 4px),
+      radial-gradient(ellipse at 30% 20%, rgba(0,200,255,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(136,85,255,0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .setup-inner {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .setup-header {
+    text-align: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(0,200,255,0.15);
+  }
+
+  .setup-logo {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(36px, 8vw, 64px);
+    letter-spacing: 8px;
+    color: var(--blue);
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .setup-logo span { color: var(--red); }
+
+  .setup-subtitle {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+
+  .setup-section-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: var(--blue);
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .setup-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Structure presets */
+  .preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+  }
+
+  .preset-card {
+    background: rgba(8,18,30,0.8);
+    border: 1px solid rgba(0,200,255,0.12);
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  }
+  .preset-card:hover {
+    border-color: rgba(0,200,255,0.5);
+    background: rgba(0,200,255,0.05);
+  }
+  .preset-card.selected {
+    border-color: var(--blue);
+    background: rgba(0,200,255,0.1);
+    box-shadow: 0 0 20px rgba(0,200,255,0.1), inset 0 0 20px rgba(0,200,255,0.05);
+  }
+  .preset-card.selected::after {
+    content: '✓ SELECTED';
+    position: absolute;
+    top: 8px; right: 10px;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--blue);
+  }
+
+  .preset-name {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .preset-desc {
+    font-size: 9px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.5;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Mini blueprint preview */
+  .preset-preview {
+    width: 100%;
+    height: 80px;
+    background: rgba(0,10,20,0.8);
+    border: 1px solid rgba(0,200,255,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .preset-preview canvas {
+    width: 100%; height: 100%;
+  }
+
+  .preset-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .preset-tag {
+    font-size: 8px;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border: 1px solid rgba(0,200,255,0.2);
+    color: rgba(0,200,255,0.6);
+    text-transform: uppercase;
+  }
+
+  /* Config sliders row */
+  .config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .config-item {
+    background: rgba(8,18,30,0.8);
+    border: 1px solid rgba(0,200,255,0.12);
+    padding: 14px;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  }
+
+  .config-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .config-label strong {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--blue);
+  }
+
+  input[type=range] {
+    width: 100%;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(0,200,255,0.15);
+    outline: none;
+    border-radius: 0;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    background: var(--blue);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    cursor: pointer;
+  }
+
+  /* Hazard selector */
+  .hazard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+  }
+  .hazard-option {
+    background: rgba(8,18,30,0.8);
+    border: 1px solid rgba(255,45,45,0.15);
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .hazard-option:hover { border-color: rgba(255,45,45,0.4); background: rgba(255,45,45,0.05); }
+  .hazard-option.selected { border-color: var(--red); background: rgba(255,45,45,0.1); }
+  .hazard-icon { font-size: 20px; margin-bottom: 4px; }
+  .hazard-name { font-family: var(--display); font-size: 13px; font-weight: 700; color: #fff; }
+  .hazard-sub { font-size: 8px; color: rgba(255,255,255,0.35); letter-spacing: 1px; margin-top: 2px; }
+
+  /* Launch button */
+  .launch-btn {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    padding: 18px 60px;
+    background: transparent;
+    border: 2px solid var(--blue);
+    color: var(--blue);
+    cursor: pointer;
+    clip-path: polygon(14px 0%, 100% 0%, calc(100% - 14px) 100%, 0% 100%);
+    transition: all 0.2s;
+    align-self: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .launch-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--blue);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    z-index: -1;
+  }
+  .launch-btn:hover {
+    color: var(--dark);
+    background: var(--blue);
+  }
+  .launch-btn:hover::before { transform: translateX(0); }
+
+  /* ═══════════════════════ SIM HUD ═══════════════════════ */
+  #canvas-container { position: absolute; inset: 0; }
   canvas { display: block; }
 
-  /* HUD */
   #hud {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    display: none;
   }
 
-  /* Top bar */
+  /* Topbar */
   #topbar {
     position: absolute;
     top: 0; left: 0; right: 0;
@@ -54,27 +311,33 @@
     display: flex;
     align-items: center;
     padding: 0 24px;
-    gap: 32px;
+    gap: 28px;
     border-bottom: 1px solid var(--border);
   }
 
   #title {
     font-family: var(--display);
     font-weight: 900;
-    font-size: 22px;
+    font-size: 20px;
     letter-spacing: 4px;
     color: var(--blue);
     text-transform: uppercase;
   }
-
   #title span { color: var(--red); }
+  #struct-name-display {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 2px;
+  }
 
   .topbar-stat {
-    font-size: 11px;
-    color: rgba(255,255,255,0.5);
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
     display: flex;
     flex-direction: column;
     gap: 1px;
+    letter-spacing: 1px;
   }
   .topbar-stat strong {
     font-family: var(--display);
@@ -87,28 +350,28 @@
   .topbar-stat.danger strong { color: var(--red); }
   .topbar-stat.warn strong { color: var(--orange); }
 
-  #alert-banner {
+  /* Status badge - STANDBY/ALERT */
+  #status-badge {
     margin-left: auto;
     font-family: var(--display);
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
     letter-spacing: 3px;
     padding: 6px 16px;
-    background: var(--red);
-    color: #fff;
     clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-    opacity: 0;
-    transition: opacity 0.3s;
+    transition: all 0.3s;
   }
-  #alert-banner.visible { opacity: 1; animation: pulse-alert 1s infinite alternate; }
-  @keyframes pulse-alert { from { background: var(--red); } to { background: #800; } }
+  #status-badge.standby { background: rgba(0,200,255,0.2); color: var(--blue); border: 1px solid rgba(0,200,255,0.4); }
+  #status-badge.evacuating { background: var(--orange); color: #fff; animation: pulse-alert 0.8s infinite alternate; }
+  #status-badge.hazard { background: var(--red); color: #fff; animation: pulse-alert 0.6s infinite alternate; }
+  #status-badge.complete { background: var(--green); color: #000; }
+  @keyframes pulse-alert { from { opacity: 1; } to { opacity: 0.6; } }
 
   /* Left panel */
   #left-panel {
     position: absolute;
-    left: 16px;
-    top: 68px;
-    width: 200px;
+    left: 16px; top: 68px;
+    width: 210px;
     pointer-events: all;
     display: flex;
     flex-direction: column;
@@ -135,15 +398,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 11px;
-    padding: 3px 0;
+    font-size: 10px;
+    padding: 4px 0;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.5px;
   }
   .stat-row:last-child { border-bottom: none; }
   .stat-row .val {
     font-family: var(--display);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     color: #fff;
   }
@@ -151,11 +415,9 @@
   .stat-row .val.red { color: var(--red); }
   .stat-row .val.orange { color: var(--orange); }
   .stat-row .val.blue { color: var(--blue); }
+  .stat-row .val.yellow { color: var(--yellow); }
 
-  /* Progress bar */
-  .evac-bar-wrap {
-    margin-top: 8px;
-  }
+  .evac-bar-wrap { margin-top: 8px; }
   .evac-bar-label {
     display: flex;
     justify-content: space-between;
@@ -167,9 +429,7 @@
   .evac-bar-track {
     height: 6px;
     background: rgba(255,255,255,0.08);
-    border-radius: 0;
     overflow: hidden;
-    position: relative;
   }
   .evac-bar-fill {
     height: 100%;
@@ -178,76 +438,79 @@
     width: 0%;
   }
 
+  /* Phase indicator */
+  .phase-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.5);
+    padding: 4px 0;
+  }
+  .phase-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .phase-dot.active { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+  .phase-dot.done { background: var(--green); }
+  .phase-dot.alert { background: var(--red); box-shadow: 0 0 6px var(--red); animation: pulse-alert 0.6s infinite alternate; }
+
   /* Legend */
   .legend-item {
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 10px;
-    padding: 2px 0;
+    padding: 3px 0;
     color: rgba(255,255,255,0.6);
+    letter-spacing: 0.5px;
   }
-  .legend-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-sq { width: 10px; height: 10px; flex-shrink: 0; }
 
-  /* Controls */
-  #controls {
+  /* Right panel */
+  #right-panel {
     position: absolute;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 16px; top: 68px;
+    width: 160px;
     display: flex;
-    gap: 10px;
-    pointer-events: all;
-    align-items: center;
+    flex-direction: column;
+    gap: 4px;
+    pointer-events: none;
   }
+  #minimap-label { font-size: 9px; letter-spacing: 2px; color: var(--blue); opacity: 0.6; margin-bottom: 4px; text-align: right; }
+  #minimap { width: 160px; height: 160px; border: 1px solid var(--border); background: rgba(0,10,20,0.85); display: block; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%); }
 
-  .ctrl-btn {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 10px 22px;
-    border: 1px solid var(--border);
+  /* Hazard info */
+  #hazard-info {
+    margin-top: 6px;
     background: var(--panel);
-    color: var(--blue);
-    cursor: pointer;
-    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
-    transition: all 0.15s;
+    border: 1px solid rgba(255,45,45,0.2);
+    padding: 10px 12px;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+    display: none;
   }
-  .ctrl-btn:hover { background: rgba(0,200,255,0.15); color: #fff; border-color: var(--blue); }
-  .ctrl-btn.danger { color: var(--red); border-color: rgba(255,45,45,0.3); }
-  .ctrl-btn.danger:hover { background: rgba(255,45,45,0.2); border-color: var(--red); }
-  .ctrl-btn.active { background: rgba(0,255,136,0.15); color: var(--green); border-color: var(--green); }
+  #hazard-info.visible { display: block; }
+  .hazard-label { font-size: 9px; letter-spacing: 2px; color: var(--red); text-transform: uppercase; margin-bottom: 6px; }
+  .hazard-stat { font-size: 9px; color: rgba(255,255,255,0.5); display: flex; justify-content: space-between; padding: 2px 0; }
+  .hazard-stat span { font-family: var(--display); font-size: 14px; font-weight: 600; color: var(--orange); }
 
-  /* Speed control */
-  #speed-display {
-    font-family: var(--display);
-    font-size: 13px;
-    font-weight: 700;
-    color: rgba(255,255,255,0.4);
-    letter-spacing: 1px;
-    min-width: 60px;
-    text-align: center;
-  }
-
-  /* Log */
+  /* Event log */
   #event-log {
     position: absolute;
     right: 16px;
-    bottom: 68px;
-    width: 220px;
-    max-height: 160px;
+    bottom: 72px;
+    width: 240px;
+    max-height: 180px;
     overflow: hidden;
     display: flex;
     flex-direction: column-reverse;
-    gap: 3px;
+    gap: 2px;
   }
-
   .log-entry {
     font-size: 9px;
     letter-spacing: 0.5px;
@@ -260,67 +523,195 @@
   .log-entry.warn { border-color: var(--orange); color: rgba(255,180,0,0.7); }
   .log-entry.danger { border-color: var(--red); color: rgba(255,80,80,0.8); }
   .log-entry.good { border-color: var(--green); color: rgba(0,255,136,0.7); }
-
   @keyframes log-in { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
 
-  /* Minimap */
-  #minimap-wrap {
+  /* Controls */
+  #controls {
     position: absolute;
-    right: 16px;
-    top: 68px;
-    pointer-events: none;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    pointer-events: all;
+    align-items: center;
   }
-  #minimap-label {
-    font-size: 9px;
+
+  .ctrl-btn {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
     letter-spacing: 2px;
-    color: var(--blue);
-    opacity: 0.6;
-    margin-bottom: 4px;
-    text-align: right;
-  }
-  #minimap {
-    width: 130px;
-    height: 130px;
+    text-transform: uppercase;
+    padding: 9px 18px;
     border: 1px solid var(--border);
-    background: rgba(0,10,20,0.85);
-    display: block;
-    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+    background: var(--panel);
+    color: var(--blue);
+    cursor: pointer;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .ctrl-btn:hover { background: rgba(0,200,255,0.15); color: #fff; border-color: var(--blue); }
+  .ctrl-btn.danger { color: var(--red); border-color: rgba(255,45,45,0.3); }
+  .ctrl-btn.danger:hover { background: rgba(255,45,45,0.2); border-color: var(--red); }
+  .ctrl-btn.active { background: rgba(0,255,136,0.15); color: var(--green); border-color: var(--green); }
+  .ctrl-btn.hazard-armed { background: rgba(255,45,45,0.15); color: var(--red); border-color: var(--red); animation: pulse-alert 0.8s infinite alternate; }
+  .ctrl-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+
+  #speed-display {
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    min-width: 50px;
+    text-align: center;
   }
 
-  /* Crosshair center indicator */
-  #center-mark {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 20px; height: 20px;
-    opacity: 0.15;
-    pointer-events: none;
-  }
-  #center-mark::before, #center-mark::after {
-    content: '';
-    position: absolute;
-    background: var(--blue);
-  }
-  #center-mark::before { width: 1px; height: 100%; left: 50%; }
-  #center-mark::after { width: 100%; height: 1px; top: 50%; }
-
-  /* Scanline effect */
+  /* Scanlines */
   #scanlines {
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px);
     pointer-events: none;
     z-index: 10;
   }
+
+  /* Completion overlay */
+  #completion-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 20;
+    pointer-events: all;
+  }
+  #completion-overlay.visible { display: flex; }
+  .complete-title {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(28px, 6vw, 52px);
+    letter-spacing: 8px;
+    color: var(--green);
+    text-transform: uppercase;
+  }
+  .complete-sub { font-size: 11px; letter-spacing: 3px; color: rgba(255,255,255,0.4); }
+  .complete-stats {
+    display: flex;
+    gap: 32px;
+    margin-top: 8px;
+  }
+  .complete-stat { text-align: center; }
+  .complete-stat .n {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 36px;
+    color: #fff;
+  }
+  .complete-stat .l { font-size: 9px; letter-spacing: 2px; color: rgba(255,255,255,0.4); }
 </style>
 </head>
 <body>
 
+<!-- ═══════════════════════ SETUP SCREEN ═══════════════════════ -->
+<div id="setup-screen">
+  <div class="setup-inner">
+    <div class="setup-header">
+      <div class="setup-logo">EVAC<span>SIM</span></div>
+      <div class="setup-subtitle">Emergency Evacuation Simulator — Configuration</div>
+    </div>
+
+    <!-- Structure presets -->
+    <div>
+      <div class="setup-section-title">Select Structure Layout</div>
+      <div class="preset-grid" id="preset-grid">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- Hazard type -->
+    <div>
+      <div class="setup-section-title">Hazard Type</div>
+      <div class="hazard-grid" id="hazard-grid">
+        <div class="hazard-option selected" data-hazard="fire">
+          <div class="hazard-icon">🔥</div>
+          <div class="hazard-name">FIRE</div>
+          <div class="hazard-sub">Spreads radially</div>
+        </div>
+        <div class="hazard-option" data-hazard="gas">
+          <div class="hazard-icon">☣️</div>
+          <div class="hazard-name">GAS LEAK</div>
+          <div class="hazard-sub">Diffuses wide</div>
+        </div>
+        <div class="hazard-option" data-hazard="flood">
+          <div class="hazard-icon">🌊</div>
+          <div class="hazard-name">FLOOD</div>
+          <div class="hazard-sub">Fills low areas</div>
+        </div>
+        <div class="hazard-option" data-hazard="structural">
+          <div class="hazard-icon">⚠️</div>
+          <div class="hazard-name">STRUCTURAL</div>
+          <div class="hazard-sub">Collapse zone</div>
+        </div>
+        <div class="hazard-option" data-hazard="explosion">
+          <div class="hazard-icon">💥</div>
+          <div class="hazard-name">EXPLOSION</div>
+          <div class="hazard-sub">Instant large radius</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Config sliders -->
+    <div>
+      <div class="setup-section-title">Simulation Parameters</div>
+      <div class="config-grid">
+        <div class="config-item">
+          <div class="config-label">
+            <span>Occupants</span>
+            <strong id="lbl-agents">60</strong>
+          </div>
+          <input type="range" id="sl-agents" min="20" max="200" value="60" step="10">
+        </div>
+        <div class="config-item">
+          <div class="config-label">
+            <span>Panic Level</span>
+            <strong id="lbl-panic">3</strong>
+          </div>
+          <input type="range" id="sl-panic" min="1" max="5" value="3" step="1">
+        </div>
+        <div class="config-item">
+          <div class="config-label">
+            <span>Exit Count</span>
+            <strong id="lbl-exits">3</strong>
+          </div>
+          <input type="range" id="sl-exits" min="1" max="6" value="3" step="1">
+        </div>
+        <div class="config-item">
+          <div class="config-label">
+            <span>Hazard Delay (s)</span>
+            <strong id="lbl-delay">0</strong>
+          </div>
+          <input type="range" id="sl-delay" min="0" max="30" value="0" step="5">
+        </div>
+      </div>
+    </div>
+
+    <button class="launch-btn" id="launch-btn">▶ Launch Simulation</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SIMULATOR ═══════════════════════ -->
 <div id="canvas-container"></div>
 
 <div id="hud">
   <div id="topbar">
-    <div id="title">EVAC<span>SIM</span></div>
+    <div>
+      <div id="title">EVAC<span>SIM</span></div>
+      <div id="struct-name-display">—</div>
+    </div>
     <div class="topbar-stat warn">
       <span>ELAPSED</span>
       <strong id="stat-time">00:00</strong>
@@ -334,10 +725,14 @@
       <strong id="stat-safe">0</strong>
     </div>
     <div class="topbar-stat danger">
-      <span>AT RISK</span>
-      <strong id="stat-risk">—</strong>
+      <span>CASUALTIES</span>
+      <strong id="stat-casualties">0</strong>
     </div>
-    <div id="alert-banner">⚠ HAZARD ACTIVE</div>
+    <div class="topbar-stat danger">
+      <span>AT RISK</span>
+      <strong id="stat-risk">0</strong>
+    </div>
+    <div id="status-badge" class="standby">● STANDBY</div>
   </div>
 
   <div id="left-panel">
@@ -353,120 +748,319 @@
         </div>
       </div>
       <div style="margin-top:10px">
-        <div class="stat-row"><span>Moving</span><span class="val blue" id="s-moving">0</span></div>
+        <div class="stat-row"><span>Waiting</span><span class="val blue" id="s-waiting">0</span></div>
+        <div class="stat-row"><span>Moving</span><span class="val yellow" id="s-moving">0</span></div>
         <div class="stat-row"><span>Evacuated</span><span class="val green" id="s-evac">0</span></div>
-        <div class="stat-row"><span>In Danger</span><span class="val red" id="s-danger">0</span></div>
+        <div class="stat-row"><span>In Danger</span><span class="val orange" id="s-danger">0</span></div>
+        <div class="stat-row"><span>Casualties</span><span class="val red" id="s-cas">0</span></div>
       </div>
     </div>
 
     <div class="panel-box">
+      <div class="panel-label">Sim Phase</div>
+      <div class="phase-row"><div class="phase-dot active" id="ph-standby"></div>STANDBY — AWAITING HAZARD</div>
+      <div class="phase-row"><div class="phase-dot" id="ph-alert"></div>HAZARD TRIGGERED</div>
+      <div class="phase-row"><div class="phase-dot" id="ph-evac"></div>EVACUATION ACTIVE</div>
+      <div class="phase-row"><div class="phase-dot" id="ph-done"></div>EVACUATION COMPLETE</div>
+    </div>
+
+    <div class="panel-box">
       <div class="panel-label">Legend</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#4488ff"></div>Agent (safe)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#ff7b00"></div>Agent (at risk)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#8888cc"></div>Idle (standby)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#00c8ff"></div>Evacuating</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff7b00"></div>In danger zone</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff2d2d"></div>Casualty</div>
       <div class="legend-item"><div class="legend-dot" style="background:#00ff88"></div>Exit zone</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#ff2d2d"></div>Hazard</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#8855ff"></div>Buildings</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#4a7c59"></div>Terrain</div>
+      <div class="legend-item"><div class="legend-sq" style="background:#3d2f6e"></div>Building</div>
     </div>
   </div>
 
-  <div id="minimap-wrap">
+  <div id="right-panel">
     <div id="minimap-label">OVERHEAD MAP</div>
-    <canvas id="minimap" width="130" height="130"></canvas>
+    <canvas id="minimap" width="160" height="160"></canvas>
+    <div id="hazard-info">
+      <div class="hazard-label" id="hazard-type-label">⚠ FIRE ACTIVE</div>
+      <div class="hazard-stat">Radius<span id="hz-radius">0m</span></div>
+      <div class="hazard-stat">In zone<span id="hz-inzone">0</span></div>
+      <div class="hazard-stat">Growth<span id="hz-growth">—</span></div>
+    </div>
   </div>
 
   <div id="event-log"></div>
 
   <div id="controls">
+    <button class="ctrl-btn" id="btn-setup">⚙ Setup</button>
     <button class="ctrl-btn" id="btn-reset">↺ Reset</button>
-    <button class="ctrl-btn active" id="btn-play">❚❚ Pause</button>
+    <button class="ctrl-btn" id="btn-play">❚❚ Pause</button>
     <div id="speed-display">1×</div>
     <button class="ctrl-btn" id="btn-slower">− Speed</button>
     <button class="ctrl-btn" id="btn-faster">+ Speed</button>
     <button class="ctrl-btn danger" id="btn-hazard">⚠ Trigger Hazard</button>
   </div>
 
-  <div id="center-mark"></div>
   <div id="scanlines"></div>
+
+  <div id="completion-overlay">
+    <div class="complete-title">EVACUATION COMPLETE</div>
+    <div class="complete-sub" id="complete-sub">All agents have cleared the zone</div>
+    <div class="complete-stats">
+      <div class="complete-stat"><div class="n" id="comp-safe">0</div><div class="l">EVACUATED</div></div>
+      <div class="complete-stat"><div class="n" id="comp-cas">0</div><div class="l">CASUALTIES</div></div>
+      <div class="complete-stat"><div class="n" id="comp-time">0:00</div><div class="l">TOTAL TIME</div></div>
+    </div>
+    <button class="ctrl-btn" id="btn-again" style="margin-top:12px; pointer-events:all">↺ Run Again</button>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-// ─── SCENE SETUP ───────────────────────────────────────────────────────────────
-const W = window.innerWidth, H = window.innerHeight;
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(W, H);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.setClearColor(0x0a1520);
-document.getElementById('canvas-container').appendChild(renderer.domElement);
+// ═══════════════════════════════════════════════════════════════
+//  STRUCTURE PRESETS
+// ═══════════════════════════════════════════════════════════════
+const PRESETS = [
+  {
+    id: 'office',
+    name: 'Office Complex',
+    desc: 'Multi-wing corporate layout with corridors and a central atrium.',
+    tags: ['corridors', 'multi-floor', 'corporate'],
+    buildings: [
+      {x:-10, z:-8,  w:10, d:4, h:8,  color:0x2f3a6e, label:'Wing A'},
+      {x: 10, z:-8,  w:10, d:4, h:8,  color:0x2f3a6e, label:'Wing B'},
+      {x:  0, z:-2,  w:6,  d:6, h:12, color:0x3d2f6e, label:'Atrium'},
+      {x:-10, z: 8,  w:8,  d:4, h:6,  color:0x2f3a6e, label:'Annex'},
+      {x: 10, z: 8,  w:8,  d:4, h:6,  color:0x2f3a6e, label:'Annex B'},
+      {x:  0, z:-14, w:14, d:3, h:5,  color:0x1e2a4e, label:'Lobby'},
+    ],
+    defaultExits: [{x:-22,z:0},{x:22,z:0},{x:0,z:-24},{x:0,z:22}],
+  },
+  {
+    id: 'school',
+    name: 'School Campus',
+    desc: 'Open-plan school with classrooms, gym block, and multiple yard exits.',
+    tags: ['open plan', 'campus', 'education'],
+    buildings: [
+      {x:-14, z:-6,  w:8,  d:4, h:4,  color:0x4a3a1e, label:'Classrooms A'},
+      {x:  0, z:-6,  w:8,  d:4, h:4,  color:0x4a3a1e, label:'Classrooms B'},
+      {x: 14, z:-6,  w:8,  d:4, h:4,  color:0x4a3a1e, label:'Classrooms C'},
+      {x:-10, z: 6,  w:5,  d:5, h:6,  color:0x3a2a4a, label:'Gym'},
+      {x:  5, z: 7,  w:8,  d:4, h:3,  color:0x2a3a2a, label:'Cafeteria'},
+      {x: -4, z:-14, w:4,  d:3, h:3,  color:0x1e3a3e, label:'Admin'},
+    ],
+    defaultExits: [{x:-24,z:8},{x:24,z:8},{x:0,z:-24},{x:-10,z:20},{x:10,z:20}],
+  },
+  {
+    id: 'hospital',
+    name: 'Hospital',
+    desc: 'Dense ward layout with narrow corridors and critical bottlenecks.',
+    tags: ['high density', 'corridors', 'critical'],
+    buildings: [
+      {x: -9, z:-10, w:6,  d:12, h:7,  color:0x1a3a4a, label:'Ward A'},
+      {x:  9, z:-10, w:6,  d:12, h:7,  color:0x1a3a4a, label:'Ward B'},
+      {x:  0, z: -8, w:5,  d:8,  h:10, color:0x2a2a5a, label:'Main Block'},
+      {x:-12, z:  6, w:4,  d:6,  h:5,  color:0x1a3a4a, label:'ICU'},
+      {x: 12, z:  6, w:4,  d:6,  h:5,  color:0x1a3a4a, label:'Surgery'},
+      {x:  0, z:-16, w:8,  d:3,  h:4,  color:0x1a2a3a, label:'ER'},
+    ],
+    defaultExits: [{x:-24,z:-10},{x:24,z:-10},{x:0,z:-24},{x:0,z:22}],
+  },
+  {
+    id: 'warehouse',
+    name: 'Industrial Warehouse',
+    desc: 'Large open warehouse with racking clusters and limited exits.',
+    tags: ['industrial', 'open', 'bottlenecks'],
+    buildings: [
+      {x:-12, z:-8,  w:5,  d:8,  h:9,  color:0x3a3a2a, label:'Rack A'},
+      {x: -2, z:-8,  w:5,  d:8,  h:9,  color:0x3a3a2a, label:'Rack B'},
+      {x:  8, z:-8,  w:5,  d:8,  h:9,  color:0x3a3a2a, label:'Rack C'},
+      {x:-12, z: 4,  w:5,  d:6,  h:9,  color:0x3a3a2a, label:'Rack D'},
+      {x:  8, z: 4,  w:5,  d:6,  h:9,  color:0x3a3a2a, label:'Rack E'},
+      {x:  0, z: 5,  w:4,  d:4,  h:5,  color:0x2a2a3a, label:'Office'},
+    ],
+    defaultExits: [{x:-24,z:0},{x:24,z:0},{x:0,z:22}],
+  },
+  {
+    id: 'stadium',
+    name: 'Stadium / Arena',
+    desc: 'Ring-shaped arena with central pitch and radial exit corridors.',
+    tags: ['high capacity', 'radial', 'sports'],
+    buildings: [
+      {x:-18, z:-4,  w:5,  d:10, h:6,  color:0x2a4a2a, label:'Stand W'},
+      {x: 18, z:-4,  w:5,  d:10, h:6,  color:0x2a4a2a, label:'Stand E'},
+      {x:  0, z:-16, w:18, d:5,  h:6,  color:0x2a4a2a, label:'Stand N'},
+      {x:  0, z: 12, w:18, d:5,  h:6,  color:0x2a4a2a, label:'Stand S'},
+      {x:-12, z:-12, w:4,  d:4,  h:5,  color:0x1a3a1a, label:'Corner NW'},
+      {x: 12, z:-12, w:4,  d:4,  h:5,  color:0x1a3a1a, label:'Corner NE'},
+    ],
+    defaultExits: [{x:-24,z:-14},{x:24,z:-14},{x:-24,z:14},{x:24,z:14},{x:0,z:-24},{x:0,z:22}],
+  },
+  {
+    id: 'hotel',
+    name: 'Hotel / High-rise',
+    desc: 'Tall tower with floor plates and a tight central core.',
+    tags: ['high-rise', 'vertical', 'stairwells'],
+    buildings: [
+      {x:  0, z: 0,  w:8,  d:8,  h:18, color:0x3a2a5a, label:'Tower'},
+      {x:-10, z:-4,  w:4,  d:6,  h:5,  color:0x2a2a4a, label:'Annex L'},
+      {x: 10, z:-4,  w:4,  d:6,  h:5,  color:0x2a2a4a, label:'Annex R'},
+      {x:  0, z:-10, w:10, d:3,  h:4,  color:0x1a1a3a, label:'Lobby'},
+      {x:-14, z: 8,  w:4,  d:4,  h:4,  color:0x1a2a3a, label:'Parking A'},
+      {x: 14, z: 8,  w:4,  d:4,  h:4,  color:0x1a2a3a, label:'Parking B'},
+    ],
+    defaultExits: [{x:-22,z:-12},{x:22,z:-12},{x:-22,z:12},{x:22,z:12}],
+  },
+];
 
-const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x0a1520, 0.018);
+// ═══════════════════════════════════════════════════════════════
+//  SETUP SCREEN LOGIC
+// ═══════════════════════════════════════════════════════════════
+let selectedPreset = PRESETS[0];
+let selectedHazard = 'fire';
+let configAgents = 60;
+let configPanic = 3;
+let configExits = 3;
+let configDelay = 0;
 
-const camera = new THREE.PerspectiveCamera(55, W/H, 0.1, 500);
-camera.position.set(0, 28, 38);
-camera.lookAt(0, 0, 0);
+function buildPreviewCanvas(preset, canvas) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const SIZE = 60;
+  ctx.fillStyle = '#030810';
+  ctx.fillRect(0,0,W,H);
 
-// Orbit
-let isDragging = false, lastMouse = {x:0,y:0};
-let camTheta = 0, camPhi = Math.PI/4, camRadius = 50;
-renderer.domElement.addEventListener('mousedown', e => { isDragging = true; lastMouse = {x:e.clientX,y:e.clientY}; });
-renderer.domElement.addEventListener('mouseup', () => isDragging = false);
-renderer.domElement.addEventListener('mousemove', e => {
-  if (!isDragging) return;
-  const dx = e.clientX - lastMouse.x, dy = e.clientY - lastMouse.y;
-  camTheta -= dx * 0.008;
-  camPhi = Math.max(0.15, Math.min(Math.PI/2.2, camPhi + dy * 0.006));
-  lastMouse = {x:e.clientX,y:e.clientY};
+  function toC(x,z) {
+    return { cx: (x + SIZE/2) / SIZE * W, cy: (z + SIZE/2) / SIZE * H };
+  }
+
+  // Buildings
+  preset.buildings.forEach(b => {
+    const {cx,cy} = toC(b.x - b.w/2, b.z - b.d/2);
+    const bw = b.w/SIZE*W, bh = b.d/SIZE*H;
+    ctx.fillStyle = 'rgba(80,60,160,0.5)';
+    ctx.fillRect(cx,cy,bw,bh);
+    ctx.strokeStyle = 'rgba(136,85,255,0.6)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(cx,cy,bw,bh);
+  });
+
+  // Exits
+  const numExits = Math.min(configExits, preset.defaultExits.length);
+  preset.defaultExits.slice(0, numExits).forEach(e => {
+    const {cx,cy} = toC(e.x, e.z);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI*2);
+    ctx.fillStyle = '#00ff88';
+    ctx.fill();
+  });
+}
+
+// Build preset cards
+const presetGrid = document.getElementById('preset-grid');
+PRESETS.forEach(p => {
+  const card = document.createElement('div');
+  card.className = 'preset-card' + (p === selectedPreset ? ' selected' : '');
+  card.dataset.id = p.id;
+
+  const previewDiv = document.createElement('div');
+  previewDiv.className = 'preset-preview';
+  const cvs = document.createElement('canvas');
+  cvs.width = 300; cvs.height = 120;
+  previewDiv.appendChild(cvs);
+
+  const tags = p.tags.map(t => `<div class="preset-tag">${t}</div>`).join('');
+  card.innerHTML = `<div class="preset-name">${p.name}</div><div class="preset-desc">${p.desc}</div>`;
+  card.appendChild(previewDiv);
+  card.innerHTML += `<div class="preset-tags">${tags}</div>`;
+  card.appendChild(previewDiv); // move preview after name/desc
+
+  // Rebuild properly
+  card.innerHTML = `
+    <div class="preset-name">${p.name}</div>
+    <div class="preset-desc">${p.desc}</div>
+    <div class="preset-tags">${tags}</div>
+  `;
+  const pv = document.createElement('div');
+  pv.className = 'preset-preview';
+  const c2 = document.createElement('canvas');
+  c2.width = 300; c2.height = 80;
+  pv.appendChild(c2);
+  card.insertBefore(pv, card.querySelector('.preset-tags'));
+
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedPreset = p;
+    refreshPreviews();
+  });
+
+  presetGrid.appendChild(card);
 });
-renderer.domElement.addEventListener('wheel', e => {
-  camRadius = Math.max(20, Math.min(90, camRadius + e.deltaY * 0.05));
+
+function refreshPreviews() {
+  document.querySelectorAll('.preset-preview canvas').forEach((cvs, i) => {
+    buildPreviewCanvas(PRESETS[i], cvs);
+  });
+}
+refreshPreviews();
+
+// Hazard selection
+document.querySelectorAll('.hazard-option').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.hazard-option').forEach(x => x.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedHazard = el.dataset.hazard;
+  });
 });
 
-// ─── LIGHTING ──────────────────────────────────────────────────────────────────
-const ambient = new THREE.AmbientLight(0x223344, 0.6);
-scene.add(ambient);
-const sun = new THREE.DirectionalLight(0xffeedd, 1.1);
-sun.position.set(20, 40, 20);
-sun.castShadow = true;
-sun.shadow.mapSize.width = 2048;
-sun.shadow.mapSize.height = 2048;
-sun.shadow.camera.near = 0.5;
-sun.shadow.camera.far = 200;
-sun.shadow.camera.left = -60;
-sun.shadow.camera.right = 60;
-sun.shadow.camera.top = 60;
-sun.shadow.camera.bottom = -60;
-scene.add(sun);
+// Sliders
+function hookSlider(id, lblId, varSetter) {
+  const sl = document.getElementById(id);
+  const lbl = document.getElementById(lblId);
+  sl.addEventListener('input', () => {
+    lbl.textContent = sl.value;
+    varSetter(parseInt(sl.value));
+    refreshPreviews();
+  });
+}
+hookSlider('sl-agents', 'lbl-agents', v => configAgents = v);
+hookSlider('sl-panic',  'lbl-panic',  v => configPanic = v);
+hookSlider('sl-exits',  'lbl-exits',  v => configExits = v);
+hookSlider('sl-delay',  'lbl-delay',  v => configDelay = v);
 
-// ─── TERRAIN ───────────────────────────────────────────────────────────────────
-const GRID = 80, SIZE = 60;
-const terrainGeo = new THREE.PlaneGeometry(SIZE, SIZE, GRID, GRID);
-terrainGeo.rotateX(-Math.PI/2);
-const pos = terrainGeo.attributes.position;
+document.getElementById('launch-btn').addEventListener('click', launchSim);
 
-// Height map with noise
+// ═══════════════════════════════════════════════════════════════
+//  THREE.JS SCENE
+// ═══════════════════════════════════════════════════════════════
+let renderer, scene, camera, terrain, terrainGeo;
+let buildingDefs = [], buildings = [], exits = [];
+let agents = [], agentGeo;
+let hazardMesh, hazardMat, fireParticles = [];
+let hazardActive = false, hazardPos, hazardRadius = 0, hazardTarget = 10;
+let simRunning = true, simSpeed = 1, simTime = 0;
+let evacuatedCount = 0, casualtyCount = 0;
+let camTheta = 0, camPhi = Math.PI/4, camRadius = 55;
+let isDragging = false, lastMouse = {};
+let simPhase = 'standby'; // standby → alert → evacuating → done
+let simComplete = false;
+let hazardGrowthRate = 1.0;
+let SIZE = 60;
+let heightMap = [];
+let AGENT_COUNT = 60;
+let PANIC_LEVEL = 3;
+let EXIT_COUNT = 3;
+let HAZARD_TYPE = 'fire';
+let autoHazardDelay = 0;
+let autoHazardTimer = null;
+const mmCanvas = document.getElementById('minimap');
+const mmCtx = mmCanvas.getContext('2d');
+
 function smoothNoise(x, z, scale, amp) {
   return Math.sin(x*scale)*Math.cos(z*scale)*amp
        + Math.sin(x*scale*2.1+1.3)*Math.sin(z*scale*1.7+0.7)*amp*0.5
        + Math.cos(x*scale*3.7+2.1)*Math.sin(z*scale*3.2+1.1)*amp*0.25;
 }
 
-const heightMap = [];
-for (let i = 0; i < pos.count; i++) {
-  const x = pos.getX(i), z = pos.getZ(i);
-  // Flatten centre area for buildings
-  const distCenter = Math.sqrt(x*x + z*z);
-  const flatFactor = Math.min(1, distCenter / 12);
-  const h = smoothNoise(x, z, 0.12, 2.5) * flatFactor;
-  pos.setY(i, h);
-  heightMap.push({x, z, h});
-}
-terrainGeo.computeVertexNormals();
-
 function getTerrainHeight(wx, wz) {
-  // Bilinear approx
   let closest = 0, dist = Infinity;
   for (const p of heightMap) {
     const d = (p.x - wx)**2 + (p.z - wz)**2;
@@ -475,105 +1069,6 @@ function getTerrainHeight(wx, wz) {
   return closest;
 }
 
-const terrainMat = new THREE.MeshLambertMaterial({ color: 0x2d4a35, wireframe: false });
-const terrain = new THREE.Mesh(terrainGeo, terrainMat);
-terrain.receiveShadow = true;
-scene.add(terrain);
-
-// Ground grid overlay
-const gridHelper = new THREE.GridHelper(SIZE, 30, 0x1a3020, 0x1a3020);
-gridHelper.material.opacity = 0.3;
-gridHelper.material.transparent = true;
-scene.add(gridHelper);
-
-// ─── BUILDINGS ─────────────────────────────────────────────────────────────────
-const buildingDefs = [
-  {x:-8, z:-6, w:6, d:5, h:5},
-  {x: 4, z:-8, w:4, d:4, h:7},
-  {x:-5, z: 5, w:5, d:3, h:4},
-  {x: 6, z: 4, w:3, d:6, h:6},
-  {x:-12, z: 2, w:3, d:3, h:3},
-  {x: 10, z:-3, w:4, d:3, h:5},
-];
-
-const buildings = [];
-buildingDefs.forEach(b => {
-  const geo = new THREE.BoxGeometry(b.w, b.h, b.d);
-  const mat = new THREE.MeshLambertMaterial({ color: 0x3d2f6e });
-  const mesh = new THREE.Mesh(geo, mat);
-  const th = getTerrainHeight(b.x, b.z);
-  mesh.position.set(b.x, th + b.h/2, b.z);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  scene.add(mesh);
-
-  // Edge lines
-  const edges = new THREE.EdgesGeometry(geo);
-  const lineMat = new THREE.LineBasicMaterial({ color: 0x8855ff, transparent: true, opacity: 0.5 });
-  const lines = new THREE.LineSegments(edges, lineMat);
-  mesh.add(lines);
-  buildings.push({ mesh, ...b, th });
-});
-
-// ─── EXIT ZONES ────────────────────────────────────────────────────────────────
-const exitDefs = [
-  {x:-22, z:-15},
-  {x: 22, z: 12},
-  {x:  0, z:-24},
-];
-
-const exits = [];
-exitDefs.forEach(e => {
-  const geo = new THREE.CylinderGeometry(2.5, 2.5, 0.2, 16);
-  const mat = new THREE.MeshLambertMaterial({ color: 0x00ff88, transparent: true, opacity: 0.7 });
-  const mesh = new THREE.Mesh(geo, mat);
-  const th = getTerrainHeight(e.x, e.z);
-  mesh.position.set(e.x, th + 0.15, e.z);
-  scene.add(mesh);
-
-  // Ring pulse
-  const rGeo = new THREE.RingGeometry(2.5, 3.0, 24);
-  const rMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.4, side: THREE.DoubleSide });
-  const ring = new THREE.Mesh(rGeo, rMat);
-  ring.rotation.x = -Math.PI/2;
-  ring.position.set(e.x, th + 0.25, e.z);
-  scene.add(ring);
-  exits.push({ pos: new THREE.Vector3(e.x, th, e.z), mesh, ring });
-});
-
-// ─── HAZARD ────────────────────────────────────────────────────────────────────
-let hazardActive = false;
-let hazardPos = new THREE.Vector3(2, 0, 3);
-let hazardRadius = 0;
-const hazardTarget = 10;
-
-const hazardGeo = new THREE.SphereGeometry(1, 16, 16);
-const hazardMat = new THREE.MeshBasicMaterial({ color: 0xff2d2d, transparent: true, opacity: 0.4 });
-const hazardMesh = new THREE.Mesh(hazardGeo, hazardMat);
-hazardMesh.visible = false;
-scene.add(hazardMesh);
-
-// Fire particles
-const fireParticles = [];
-function createFireParticles() {
-  for (let i = 0; i < 30; i++) {
-    const geo = new THREE.SphereGeometry(0.2 + Math.random()*0.3, 6, 6);
-    const mat = new THREE.MeshBasicMaterial({
-      color: Math.random() > 0.5 ? 0xff4400 : 0xff8800,
-      transparent: true, opacity: 0.7
-    });
-    const p = new THREE.Mesh(geo, mat);
-    p.userData = { offset: Math.random()*Math.PI*2, speed: 0.5+Math.random()*2, r: Math.random()*1.5 };
-    scene.add(p);
-    fireParticles.push(p);
-  }
-}
-createFireParticles();
-
-// ─── AGENTS ────────────────────────────────────────────────────────────────────
-const AGENT_COUNT = 60;
-const agents = [];
-
 function isBuildingAt(x, z, margin=1.5) {
   for (const b of buildingDefs) {
     if (Math.abs(x - b.x) < b.w/2 + margin && Math.abs(z - b.z) < b.d/2 + margin) return true;
@@ -581,196 +1076,417 @@ function isBuildingAt(x, z, margin=1.5) {
   return false;
 }
 
+function isExitArea(x, z) {
+  for (const ex of exits) {
+    if (Math.abs(x - ex.pos.x) < 5 && Math.abs(z - ex.pos.z) < 5) return true;
+  }
+  return false;
+}
+
 function randomSpawn() {
   let x, z;
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 200; i++) {
     x = (Math.random()-0.5) * 44;
     z = (Math.random()-0.5) * 44;
-    if (!isBuildingAt(x, z)) return {x, z};
+    if (!isBuildingAt(x, z) && !isExitArea(x, z)) return {x, z};
   }
-  return {x:0, z:0};
+  return {x: (Math.random()-0.5)*10, z: (Math.random()-0.5)*10};
 }
 
-const agentGeo = new THREE.SphereGeometry(0.35, 8, 8);
+function initScene() {
+  if (renderer) {
+    renderer.dispose();
+    document.getElementById('canvas-container').innerHTML = '';
+  }
 
-for (let i = 0; i < AGENT_COUNT; i++) {
-  const sp = randomSpawn();
-  const mat = new THREE.MeshLambertMaterial({ color: 0x4488ff });
-  const mesh = new THREE.Mesh(agentGeo, mat);
-  const th = getTerrainHeight(sp.x, sp.z);
-  mesh.position.set(sp.x, th + 0.5, sp.z);
-  mesh.castShadow = true;
-  scene.add(mesh);
+  const W = window.innerWidth, H = window.innerHeight;
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(W, H);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setClearColor(0x0a1520);
+  document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-  // Pick nearest exit as target
-  let nearestExit = exits[0], nearestDist = Infinity;
-  exits.forEach(ex => {
-    const d = mesh.position.distanceTo(ex.pos);
-    if (d < nearestDist) { nearestDist = d; nearestExit = ex; }
+  scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x0a1520, 0.016);
+
+  camera = new THREE.PerspectiveCamera(55, W/H, 0.1, 500);
+  camera.position.set(0, 30, 40);
+  camera.lookAt(0, 0, 0);
+
+  renderer.domElement.addEventListener('mousedown', e => { isDragging = true; lastMouse = {x:e.clientX,y:e.clientY}; });
+  renderer.domElement.addEventListener('mouseup', () => isDragging = false);
+  renderer.domElement.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - lastMouse.x, dy = e.clientY - lastMouse.y;
+    camTheta -= dx * 0.008;
+    camPhi = Math.max(0.15, Math.min(Math.PI/2.2, camPhi + dy * 0.006));
+    lastMouse = {x:e.clientX,y:e.clientY};
+  });
+  renderer.domElement.addEventListener('wheel', e => {
+    camRadius = Math.max(18, Math.min(100, camRadius + e.deltaY * 0.05));
   });
 
-  agents.push({
-    mesh, mat,
-    pos: new THREE.Vector3(sp.x, th, sp.z),
-    vel: new THREE.Vector3(),
-    target: nearestExit,
-    speed: 1.8 + Math.random()*1.2,
-    evacuated: false,
-    inDanger: false,
-    wobble: Math.random()*Math.PI*2
+  // Lighting
+  scene.add(new THREE.AmbientLight(0x223344, 0.6));
+  const sun = new THREE.DirectionalLight(0xffeedd, 1.1);
+  sun.position.set(20, 40, 20);
+  sun.castShadow = true;
+  sun.shadow.mapSize.width = 2048; sun.shadow.mapSize.height = 2048;
+  sun.shadow.camera.near = 0.5; sun.shadow.camera.far = 200;
+  sun.shadow.camera.left = -80; sun.shadow.camera.right = 80;
+  sun.shadow.camera.top = 80; sun.shadow.camera.bottom = -80;
+  scene.add(sun);
+
+  // Terrain
+  const GRID = 80;
+  terrainGeo = new THREE.PlaneGeometry(SIZE, SIZE, GRID, GRID);
+  terrainGeo.rotateX(-Math.PI/2);
+  const pos = terrainGeo.attributes.position;
+  heightMap = [];
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i), z = pos.getZ(i);
+    const distCenter = Math.sqrt(x*x + z*z);
+    const flatFactor = Math.min(1, distCenter / 14);
+    const h = smoothNoise(x, z, 0.1, 2.0) * flatFactor;
+    pos.setY(i, h);
+    heightMap.push({x, z, h});
+  }
+  terrainGeo.computeVertexNormals();
+  const terrainMat = new THREE.MeshLambertMaterial({ color: 0x2d4a35 });
+  terrain = new THREE.Mesh(terrainGeo, terrainMat);
+  terrain.receiveShadow = true;
+  scene.add(terrain);
+
+  const gridHelper = new THREE.GridHelper(SIZE, 30, 0x1a3020, 0x1a3020);
+  gridHelper.material.opacity = 0.25;
+  gridHelper.material.transparent = true;
+  scene.add(gridHelper);
+}
+
+function buildLayout(preset, numExits) {
+  buildingDefs = preset.buildings;
+  buildings = [];
+
+  buildingDefs.forEach(b => {
+    const geo = new THREE.BoxGeometry(b.w, b.h, b.d);
+    const mat = new THREE.MeshLambertMaterial({ color: b.color || 0x3d2f6e });
+    const mesh = new THREE.Mesh(geo, mat);
+    const th = getTerrainHeight(b.x, b.z);
+    mesh.position.set(b.x, th + b.h/2, b.z);
+    mesh.castShadow = true; mesh.receiveShadow = true;
+    scene.add(mesh);
+    const edges = new THREE.EdgesGeometry(geo);
+    const lineMat = new THREE.LineBasicMaterial({ color: 0x8855ff, transparent: true, opacity: 0.4 });
+    mesh.add(new THREE.LineSegments(edges, lineMat));
+
+    // Label sprite
+    if (b.label) {
+      // small disc marker
+      const discGeo = new THREE.CylinderGeometry(0.3,0.3,0.05,8);
+      const discMat = new THREE.MeshBasicMaterial({ color: 0x8855ff, transparent: true, opacity: 0.7 });
+      const disc = new THREE.Mesh(discGeo, discMat);
+      disc.position.set(b.x, th + b.h + 0.3, b.z);
+      scene.add(disc);
+    }
+    buildings.push({ mesh, ...b, th });
+  });
+
+  exits = [];
+  const exitPositions = preset.defaultExits.slice(0, numExits);
+  exitPositions.forEach(e => {
+    const geo = new THREE.CylinderGeometry(2.5, 2.5, 0.2, 20);
+    const mat = new THREE.MeshLambertMaterial({ color: 0x00ff88, transparent: true, opacity: 0.7 });
+    const mesh = new THREE.Mesh(geo, mat);
+    const th = getTerrainHeight(e.x, e.z);
+    mesh.position.set(e.x, th + 0.15, e.z);
+    scene.add(mesh);
+
+    const rGeo = new THREE.RingGeometry(2.5, 3.2, 24);
+    const rMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.4, side: THREE.DoubleSide });
+    const ring = new THREE.Mesh(rGeo, rMat);
+    ring.rotation.x = -Math.PI/2;
+    ring.position.set(e.x, th + 0.25, e.z);
+    scene.add(ring);
+
+    // EXIT sign post
+    const postGeo = new THREE.BoxGeometry(0.15, 2, 0.15);
+    const postMat = new THREE.MeshLambertMaterial({ color: 0x00aa55 });
+    const post = new THREE.Mesh(postGeo, postMat);
+    post.position.set(e.x, th + 1.1, e.z);
+    scene.add(post);
+
+    exits.push({ pos: new THREE.Vector3(e.x, th, e.z), mesh, ring });
   });
 }
 
-// ─── STATS / STATE ─────────────────────────────────────────────────────────────
-let simRunning = true;
-let simSpeed = 1;
-let simTime = 0;
-let evacuatedCount = 0;
+function spawnAgents(count, panic) {
+  agents = [];
+  agentGeo = new THREE.SphereGeometry(0.3, 8, 8);
+  AGENT_COUNT = count;
+
+  for (let i = 0; i < count; i++) {
+    const sp = randomSpawn();
+    const mat = new THREE.MeshLambertMaterial({ color: 0x8888cc });
+    const mesh = new THREE.Mesh(agentGeo, mat);
+    const th = getTerrainHeight(sp.x, sp.z);
+    mesh.position.set(sp.x, th + 0.4, sp.z);
+    mesh.castShadow = true;
+    scene.add(mesh);
+
+    let nearestExit = exits[0], nearestDist = Infinity;
+    exits.forEach(ex => {
+      const d = Math.hypot(sp.x - ex.pos.x, sp.z - ex.pos.z);
+      if (d < nearestDist) { nearestDist = d; nearestExit = ex; }
+    });
+
+    agents.push({
+      mesh, mat,
+      pos: new THREE.Vector3(sp.x, th, sp.z),
+      spawnPos: new THREE.Vector3(sp.x, th, sp.z),
+      vel: new THREE.Vector3(),
+      target: nearestExit,
+      speed: (1.5 + Math.random()*1.0) * (0.7 + panic * 0.12),
+      evacuated: false,
+      casualty: false,
+      inDanger: false,
+      moving: false,
+      wobble: Math.random()*Math.PI*2,
+      panicMult: 0.8 + Math.random() * 0.4,
+      reactionDelay: Math.random() * (6 - panic) * 0.5, // higher panic = faster reaction
+    });
+  }
+}
+
+function buildHazard(type) {
+  // Cleanup old
+  if (hazardMesh) { scene.remove(hazardMesh); hazardMesh = null; }
+  fireParticles.forEach(p => scene.remove(p));
+  fireParticles = [];
+
+  HAZARD_TYPE = type;
+  hazardActive = false;
+  hazardRadius = 0;
+
+  // Place hazard near center but not on building
+  let hx = 2, hz = 3;
+  for (let i = 0; i < 50; i++) {
+    hx = (Math.random()-0.5)*20; hz = (Math.random()-0.5)*20;
+    if (!isBuildingAt(hx, hz, 3)) break;
+  }
+  hazardPos = new THREE.Vector3(hx, 0, hz);
+
+  // Hazard visuals vary by type
+  let hColor, hOpacity;
+  switch(type) {
+    case 'fire':       hColor = 0xff2d2d; hOpacity = 0.35; hazardGrowthRate = 0.9; hazardTarget = 10; break;
+    case 'gas':        hColor = 0xaaff44; hOpacity = 0.25; hazardGrowthRate = 1.4; hazardTarget = 14; break;
+    case 'flood':      hColor = 0x2299ff; hOpacity = 0.45; hazardGrowthRate = 0.6; hazardTarget = 12; break;
+    case 'structural': hColor = 0xff8800; hOpacity = 0.40; hazardGrowthRate = 0.3; hazardTarget = 8;  break;
+    case 'explosion':  hColor = 0xffff00; hOpacity = 0.50; hazardGrowthRate = 5.0; hazardTarget = 16; break;
+  }
+
+  const hazardGeo = new THREE.SphereGeometry(1, 20, 20);
+  hazardMat = new THREE.MeshBasicMaterial({ color: hColor, transparent: true, opacity: hOpacity });
+  hazardMesh = new THREE.Mesh(hazardGeo, hazardMat);
+  hazardMesh.visible = false;
+  scene.add(hazardMesh);
+
+  // Particles for fire/explosion
+  if (type === 'fire' || type === 'explosion') {
+    for (let i = 0; i < 36; i++) {
+      const geo = new THREE.SphereGeometry(0.15 + Math.random()*0.25, 6, 6);
+      const col = Math.random() > 0.5 ? (type==='explosion' ? 0xffee00 : 0xff4400) : (type==='explosion' ? 0xff8800 : 0xff8800);
+      const mat = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.7 });
+      const p = new THREE.Mesh(geo, mat);
+      p.userData = { offset: Math.random()*Math.PI*2, speed: 0.5+Math.random()*2, r: Math.random()*2.0 };
+      p.visible = false;
+      scene.add(p);
+      fireParticles.push(p);
+    }
+  }
+  // Gas cloud puffs
+  if (type === 'gas') {
+    for (let i = 0; i < 20; i++) {
+      const geo = new THREE.SphereGeometry(0.5 + Math.random()*0.5, 6, 6);
+      const mat = new THREE.MeshBasicMaterial({ color: 0xaaff44, transparent: true, opacity: 0.3 });
+      const p = new THREE.Mesh(geo, mat);
+      p.userData = { offset: Math.random()*Math.PI*2, speed: 0.2+Math.random()*0.5, r: Math.random()*3 };
+      p.visible = false;
+      scene.add(p);
+      fireParticles.push(p);
+    }
+  }
+}
+
+function triggerHazard() {
+  if (hazardActive) return;
+  hazardActive = true;
+  hazardRadius = HAZARD_TYPE === 'explosion' ? 0.5 : 0.1;
+  const th = getTerrainHeight(hazardPos.x, hazardPos.z);
+  hazardMesh.position.set(hazardPos.x, th + 1, hazardPos.z);
+  hazardMesh.visible = true;
+  fireParticles.forEach(p => p.visible = true);
+
+  simPhase = 'alert';
+  updatePhaseUI();
+
+  const typeName = HAZARD_TYPE.toUpperCase();
+  document.getElementById('status-badge').className = 'hazard';
+  document.getElementById('status-badge').textContent = `⚠ ${typeName} ACTIVE`;
+  document.getElementById('hazard-type-label').textContent = `⚠ ${typeName} ACTIVE`;
+  document.getElementById('hazard-info').classList.add('visible');
+
+  log(`⚠ ${typeName} TRIGGERED at (${hazardPos.x.toFixed(1)}, ${hazardPos.z.toFixed(1)})`, 'danger');
+  log('Agents receiving evacuation signal…', 'warn');
+
+  document.getElementById('btn-hazard').textContent = '✕ Clear Hazard';
+  document.getElementById('btn-hazard').className = 'ctrl-btn hazard-armed';
+
+  // Agents start moving after reaction delay
+  setTimeout(() => {
+    simPhase = 'evacuating';
+    updatePhaseUI();
+    document.getElementById('status-badge').className = 'evacuating';
+    document.getElementById('status-badge').textContent = '▶ EVACUATING';
+    agents.forEach(a => { if (!a.evacuated && !a.casualty) a.moving = true; });
+    log('Evacuation in progress', 'warn');
+  }, 800);
+}
+
+function clearHazard() {
+  hazardActive = false;
+  hazardRadius = 0;
+  hazardMesh.visible = false;
+  fireParticles.forEach(p => p.visible = false);
+  document.getElementById('hazard-info').classList.remove('visible');
+  document.getElementById('status-badge').className = 'evacuating';
+  document.getElementById('status-badge').textContent = '▶ EVACUATING';
+  log('Hazard cleared — evacuation continues', 'warn');
+
+  document.getElementById('btn-hazard').textContent = '⚠ Trigger Hazard';
+  document.getElementById('btn-hazard').className = 'ctrl-btn danger';
+
+  agents.forEach(a => {
+    if (!a.evacuated && !a.casualty) {
+      a.inDanger = false;
+      let nearest = exits[0], nDist = Infinity;
+      exits.forEach(ex => {
+        const d = a.pos.distanceTo(ex.pos);
+        if (d < nDist) { nDist = d; nearest = ex; }
+      });
+      a.target = nearest;
+    }
+  });
+}
+
+function updatePhaseUI() {
+  const phases = ['standby','alert','evacuating','done'];
+  const phaseEls = { standby:'ph-standby', alert:'ph-alert', evacuating:'ph-evac', done:'ph-done' };
+  const idx = phases.indexOf(simPhase);
+  phases.forEach((ph, i) => {
+    const el = document.getElementById(phaseEls[ph]);
+    if (i < idx) { el.className = 'phase-dot done'; }
+    else if (i === idx) { el.className = 'phase-dot active' + (ph === 'alert' ? ' alert' : ''); }
+    else { el.className = 'phase-dot'; }
+  });
+}
 
 function log(msg, type='') {
   const el = document.getElementById('event-log');
   const entry = document.createElement('div');
   entry.className = 'log-entry ' + type;
-  const t = new Date(simTime * 1000);
   const ts = `${String(Math.floor(simTime/60)).padStart(2,'0')}:${String(Math.floor(simTime%60)).padStart(2,'0')}`;
   entry.textContent = `[${ts}] ${msg}`;
   el.insertBefore(entry, el.firstChild);
-  while (el.children.length > 12) el.removeChild(el.lastChild);
+  while (el.children.length > 14) el.removeChild(el.lastChild);
 }
 
-log('Simulation initialized', '');
-log('60 agents spawned', '');
-log('3 exit zones active', 'good');
-
-// ─── MINIMAP ───────────────────────────────────────────────────────────────────
-const mmCanvas = document.getElementById('minimap');
-const mmCtx = mmCanvas.getContext('2d');
-
-function worldToMM(x, z) {
-  const s = 130 / SIZE;
-  return { mx: (x + SIZE/2) * s, mz: (z + SIZE/2) * s };
-}
-
-function drawMinimap() {
-  mmCtx.fillStyle = '#030810';
-  mmCtx.fillRect(0, 0, 130, 130);
-
-  // Buildings
-  buildingDefs.forEach(b => {
-    const {mx, mz} = worldToMM(b.x - b.w/2, b.z - b.d/2);
-    const s = 130/SIZE;
-    mmCtx.fillStyle = '#5533aa';
-    mmCtx.fillRect(mx, mz, b.w*s, b.d*s);
-  });
-
-  // Exits
-  exits.forEach(ex => {
-    const {mx, mz} = worldToMM(ex.pos.x, ex.pos.z);
-    mmCtx.beginPath();
-    mmCtx.arc(mx, mz, 4, 0, Math.PI*2);
-    mmCtx.fillStyle = '#00ff88';
-    mmCtx.fill();
-  });
-
-  // Hazard
-  if (hazardActive) {
-    const {mx, mz} = worldToMM(hazardPos.x, hazardPos.z);
-    const s = 130/SIZE;
-    mmCtx.beginPath();
-    mmCtx.arc(mx, mz, hazardRadius * s, 0, Math.PI*2);
-    mmCtx.fillStyle = 'rgba(255,45,45,0.3)';
-    mmCtx.fill();
-    mmCtx.strokeStyle = '#ff2d2d';
-    mmCtx.lineWidth = 1;
-    mmCtx.stroke();
-  }
-
-  // Agents
-  agents.forEach(a => {
-    if (a.evacuated) return;
-    const {mx, mz} = worldToMM(a.pos.x, a.pos.z);
-    mmCtx.beginPath();
-    mmCtx.arc(mx, mz, 2, 0, Math.PI*2);
-    mmCtx.fillStyle = a.inDanger ? '#ff7b00' : '#4488ff';
-    mmCtx.fill();
-  });
-
-  // Camera indicator
-  mmCtx.fillStyle = 'rgba(0,200,255,0.6)';
-  mmCtx.fillRect(60, 60, 3, 3);
-}
-
-// ─── UI UPDATES ────────────────────────────────────────────────────────────────
-function updateHUD() {
-  const total = AGENT_COUNT;
-  const evac = evacuatedCount;
-  const inDanger = agents.filter(a => !a.evacuated && a.inDanger).length;
-  const moving = total - evac;
-  const pct = Math.round(evac / total * 100);
-
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-safe').textContent = evac;
-  document.getElementById('stat-risk').textContent = inDanger;
-  document.getElementById('s-moving').textContent = moving;
-  document.getElementById('s-evac').textContent = evac;
-  document.getElementById('s-danger').textContent = inDanger;
-  document.getElementById('evac-pct').textContent = pct + '%';
-  document.getElementById('evac-bar').style.width = pct + '%';
-
-  const mins = Math.floor(simTime/60);
-  const secs = Math.floor(simTime%60);
-  document.getElementById('stat-time').textContent =
-    `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-}
-
-// ─── SIMULATION LOGIC ──────────────────────────────────────────────────────────
-let lastLoggedEvac = 0;
+// ═══════════════════════════════════════════════════════════════
+//  STEP AGENTS
+// ═══════════════════════════════════════════════════════════════
+let lastEvacLogged = 0;
+let lastCasLogged = 0;
 
 function stepAgents(dt) {
-  agents.forEach(a => {
-    if (a.evacuated) return;
+  let inDangerCount = 0;
 
-    // Check evacuation
-    const distToExit = a.pos.distanceTo(a.target.pos);
-    if (distToExit < 3.0) {
-      a.evacuated = true;
-      a.mesh.visible = false;
-      evacuatedCount++;
-      if (evacuatedCount % 10 === 0) log(`${evacuatedCount} agents evacuated`, 'good');
+  agents.forEach(a => {
+    if (a.evacuated || a.casualty) return;
+
+    // Casualty check
+    if (hazardActive) {
+      const d = a.pos.distanceTo(hazardPos);
+      a.inDanger = d < hazardRadius;
+      if (a.inDanger) {
+        inDangerCount++;
+        // Casualty probability (higher when deeper in zone, higher panic)
+        const depthFactor = 1 - d / hazardRadius;
+        const casChance = depthFactor * 0.004 * PANIC_LEVEL * dt * simSpeed;
+        if (Math.random() < casChance) {
+          a.casualty = true;
+          a.moving = false;
+          a.mat.color.setHex(0xff2d2d);
+          a.mesh.scale.set(0.6, 0.3, 0.6);
+          casualtyCount++;
+          if (casualtyCount > lastCasLogged) {
+            log(`Casualty reported — ${casualtyCount} total`, 'danger');
+            lastCasLogged = casualtyCount;
+          }
+          return;
+        }
+      }
+    } else {
+      a.inDanger = false;
+    }
+
+    if (!a.moving) {
+      // Idle bob
+      a.wobble += dt * 1.5;
+      const th = getTerrainHeight(a.pos.x, a.pos.z);
+      a.mesh.position.y = th + 0.4 + Math.sin(a.wobble) * 0.03;
+      a.mat.color.setHex(0x8888cc);
       return;
     }
 
-    // Hazard avoidance
-    const distToHazard = hazardActive ? a.pos.distanceTo(hazardPos) : Infinity;
-    a.inDanger = hazardActive && distToHazard < hazardRadius;
+    // Check evacuation
+    const distToExit = a.pos.distanceTo(a.target.pos);
+    if (distToExit < 2.5) {
+      a.evacuated = true;
+      a.mesh.visible = false;
+      evacuatedCount++;
+      const milestone = Math.floor(evacuatedCount / 10) * 10;
+      if (evacuatedCount > lastEvacLogged && evacuatedCount % 10 === 0) {
+        log(`${evacuatedCount} agents evacuated (${Math.round(evacuatedCount/AGENT_COUNT*100)}%)`, 'good');
+        lastEvacLogged = evacuatedCount;
+      }
+      return;
+    }
 
-    // Update target if hazard nearby
-    if (hazardActive && distToHazard < hazardRadius * 1.5) {
+    // Update target if hazard nearby — pick exit farthest from hazard relative to agent
+    if (hazardActive && a.pos.distanceTo(hazardPos) < hazardRadius * 2.5) {
       let bestExit = null, bestScore = -Infinity;
       exits.forEach(ex => {
         const dToExit = a.pos.distanceTo(ex.pos);
-        const dHazardToExit = hazardPos.distanceTo(ex.pos);
-        const score = dHazardToExit - dToExit * 0.3;
+        const dHazToExit = hazardPos.distanceTo(ex.pos);
+        const score = dHazToExit - dToExit * 0.25;
         if (score > bestScore) { bestScore = score; bestExit = ex; }
       });
       if (bestExit) a.target = bestExit;
     }
 
-    // Steering toward target
+    // Steering
     const toTarget = new THREE.Vector3().subVectors(a.target.pos, a.pos).normalize();
+    let avoid = new THREE.Vector3();
 
     // Building avoidance
-    let avoid = new THREE.Vector3();
     buildingDefs.forEach(b => {
       const dx = a.pos.x - b.x, dz = a.pos.z - b.z;
-      const overlap = (b.w/2 + 2) - Math.abs(dx);
-      const overlapZ = (b.d/2 + 2) - Math.abs(dz);
-      if (overlap > 0 && overlapZ > 0) {
-        if (Math.abs(dx) > Math.abs(dz)) {
-          avoid.x += Math.sign(dx) * 2;
-        } else {
-          avoid.z += Math.sign(dz) * 2;
-        }
+      const overlapX = (b.w/2 + 2.2) - Math.abs(dx);
+      const overlapZ = (b.d/2 + 2.2) - Math.abs(dz);
+      if (overlapX > 0 && overlapZ > 0) {
+        if (Math.abs(dx) > Math.abs(dz)) { avoid.x += Math.sign(dx) * 2.5; }
+        else { avoid.z += Math.sign(dz) * 2.5; }
       }
     });
 
@@ -778,46 +1494,151 @@ function stepAgents(dt) {
     if (hazardActive) {
       const awayFromHazard = new THREE.Vector3().subVectors(a.pos, hazardPos);
       const hDist = awayFromHazard.length();
-      if (hDist < hazardRadius * 2) {
-        awayFromHazard.normalize().multiplyScalar(4 / (hDist + 0.1));
+      if (hDist < hazardRadius * 2.5) {
+        awayFromHazard.normalize().multiplyScalar(5 / (hDist + 0.1));
         avoid.add(awayFromHazard);
       }
     }
 
-    // Separation from other agents
+    // Agent separation
     agents.forEach(other => {
-      if (other === a || other.evacuated) return;
+      if (other === a || other.evacuated || other.casualty) return;
       const sep = new THREE.Vector3().subVectors(a.pos, other.pos);
       const d = sep.length();
-      if (d < 1.5 && d > 0) {
-        sep.normalize().multiplyScalar(0.3 / d);
-        avoid.add(sep);
-      }
+      if (d < 1.4 && d > 0) { sep.normalize().multiplyScalar(0.35 / d); avoid.add(sep); }
     });
 
-    const desired = toTarget.clone().add(avoid).normalize().multiplyScalar(a.speed * dt);
-    a.vel.lerp(desired, 0.15);
-
+    const panicSpeed = a.inDanger ? a.speed * 1.4 : a.speed;
+    const desired = toTarget.clone().add(avoid).normalize().multiplyScalar(panicSpeed * dt);
+    a.vel.lerp(desired, 0.18);
     a.pos.add(a.vel);
-    // Bounds
+
     a.pos.x = Math.max(-SIZE/2+1, Math.min(SIZE/2-1, a.pos.x));
     a.pos.z = Math.max(-SIZE/2+1, Math.min(SIZE/2-1, a.pos.z));
 
     const th = getTerrainHeight(a.pos.x, a.pos.z);
-    a.wobble += dt * 8;
+    a.wobble += dt * (a.inDanger ? 14 : 8);
     const bobY = Math.sin(a.wobble) * 0.08;
-    a.mesh.position.set(a.pos.x, th + 0.5 + bobY, a.pos.z);
-    a.mat.color.setHex(a.inDanger ? 0xff7b00 : 0x4488ff);
+    a.mesh.position.set(a.pos.x, th + 0.4 + bobY, a.pos.z);
+    a.mat.color.setHex(a.inDanger ? 0xff7b00 : 0x00c8ff);
+  });
+
+  return inDangerCount;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MINIMAP
+// ═══════════════════════════════════════════════════════════════
+function worldToMM(x, z) {
+  const s = 160 / SIZE;
+  return { mx: (x + SIZE/2) * s, mz: (z + SIZE/2) * s };
+}
+
+function drawMinimap() {
+  mmCtx.fillStyle = '#030810';
+  mmCtx.fillRect(0, 0, 160, 160);
+
+  buildingDefs.forEach(b => {
+    const {mx, mz} = worldToMM(b.x - b.w/2, b.z - b.d/2);
+    const s = 160/SIZE;
+    mmCtx.fillStyle = '#5533aa';
+    mmCtx.fillRect(mx, mz, b.w*s, b.d*s);
+    mmCtx.strokeStyle = '#8855ff';
+    mmCtx.lineWidth = 0.5;
+    mmCtx.strokeRect(mx, mz, b.w*s, b.d*s);
+  });
+
+  exits.forEach(ex => {
+    const {mx, mz} = worldToMM(ex.pos.x, ex.pos.z);
+    mmCtx.beginPath();
+    mmCtx.arc(mx, mz, 5, 0, Math.PI*2);
+    mmCtx.fillStyle = 'rgba(0,255,136,0.3)';
+    mmCtx.fill();
+    mmCtx.beginPath();
+    mmCtx.arc(mx, mz, 3, 0, Math.PI*2);
+    mmCtx.fillStyle = '#00ff88';
+    mmCtx.fill();
+  });
+
+  if (hazardActive) {
+    const {mx, mz} = worldToMM(hazardPos.x, hazardPos.z);
+    const s = 160/SIZE;
+    let hc;
+    switch(HAZARD_TYPE) {
+      case 'fire': hc = 'rgba(255,45,45,'; break;
+      case 'gas': hc = 'rgba(170,255,68,'; break;
+      case 'flood': hc = 'rgba(34,153,255,'; break;
+      case 'structural': hc = 'rgba(255,136,0,'; break;
+      case 'explosion': hc = 'rgba(255,255,0,'; break;
+      default: hc = 'rgba(255,45,45,';
+    }
+    mmCtx.beginPath();
+    mmCtx.arc(mx, mz, hazardRadius * s, 0, Math.PI*2);
+    mmCtx.fillStyle = hc + '0.25)';
+    mmCtx.fill();
+    mmCtx.strokeStyle = hc + '0.8)';
+    mmCtx.lineWidth = 1.5;
+    mmCtx.stroke();
+  }
+
+  agents.forEach(a => {
+    if (a.evacuated) return;
+    const {mx, mz} = worldToMM(a.pos.x, a.pos.z);
+    mmCtx.beginPath();
+    mmCtx.arc(mx, mz, 1.5, 0, Math.PI*2);
+    if (a.casualty) mmCtx.fillStyle = '#ff2d2d';
+    else if (a.inDanger) mmCtx.fillStyle = '#ff7b00';
+    else if (a.moving) mmCtx.fillStyle = '#00c8ff';
+    else mmCtx.fillStyle = '#8888cc';
+    mmCtx.fill();
   });
 }
 
-// ─── MAIN LOOP ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  HUD UPDATE
+// ═══════════════════════════════════════════════════════════════
+function updateHUD(inDangerCount) {
+  const total = AGENT_COUNT;
+  const evac = evacuatedCount;
+  const cas = casualtyCount;
+  const active = total - evac - cas;
+  const moving = agents.filter(a => !a.evacuated && !a.casualty && a.moving).length;
+  const waiting = agents.filter(a => !a.evacuated && !a.casualty && !a.moving).length;
+  const pct = Math.round(evac / total * 100);
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-safe').textContent = evac;
+  document.getElementById('stat-risk').textContent = inDangerCount;
+  document.getElementById('stat-casualties').textContent = cas;
+  document.getElementById('s-waiting').textContent = waiting;
+  document.getElementById('s-moving').textContent = moving;
+  document.getElementById('s-evac').textContent = evac;
+  document.getElementById('s-danger').textContent = inDangerCount;
+  document.getElementById('s-cas').textContent = cas;
+  document.getElementById('evac-pct').textContent = pct + '%';
+  document.getElementById('evac-bar').style.width = pct + '%';
+
+  if (hazardActive) {
+    document.getElementById('hz-radius').textContent = hazardRadius.toFixed(1) + 'm';
+    document.getElementById('hz-inzone').textContent = inDangerCount;
+    document.getElementById('hz-growth').textContent = hazardGrowthRate.toFixed(1) + 'm/s';
+  }
+
+  const mins = Math.floor(simTime/60);
+  const secs = Math.floor(simTime%60);
+  document.getElementById('stat-time').textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MAIN LOOP
+// ═══════════════════════════════════════════════════════════════
 let lastTime = performance.now();
 let fireAnimT = 0;
 let exitPulseT = 0;
-let hazardGrowth = 0;
+let animRunning = false;
 
 function animate() {
+  if (!animRunning) return;
   requestAnimationFrame(animate);
   const now = performance.now();
   const rawDt = Math.min((now - lastTime)/1000, 0.05);
@@ -828,37 +1649,55 @@ function animate() {
   fireAnimT += rawDt;
   exitPulseT += rawDt;
 
-  // Camera orbit
   const cx = camRadius * Math.sin(camTheta) * Math.sin(camPhi);
   const cy = camRadius * Math.cos(camPhi);
   const cz = camRadius * Math.cos(camTheta) * Math.sin(camPhi);
   camera.position.set(cx, cy, cz);
   camera.lookAt(0, 2, 0);
 
-  if (simRunning) {
-    stepAgents(dt);
+  let inDangerCount = 0;
+
+  if (simRunning && !simComplete) {
+    inDangerCount = stepAgents(dt);
 
     // Hazard grow
     if (hazardActive && hazardRadius < hazardTarget) {
-      hazardRadius = Math.min(hazardTarget, hazardRadius + dt * 0.8);
+      hazardRadius = Math.min(hazardTarget, hazardRadius + dt * hazardGrowthRate);
       hazardMesh.scale.setScalar(hazardRadius);
     }
 
-    // Fire particles
+    // Particles
     if (hazardActive) {
       fireParticles.forEach((p, i) => {
         const t = fireAnimT * p.userData.speed + p.userData.offset;
         const r = p.userData.r;
+        const th = getTerrainHeight(hazardPos.x, hazardPos.z);
         p.position.set(
           hazardPos.x + Math.sin(t) * r,
-          getTerrainHeight(hazardPos.x, hazardPos.z) + 0.5 + (Math.sin(t*1.3+i) * 0.5 + 0.5) * 3,
+          th + 0.5 + (Math.sin(t*1.3+i)*0.5+0.5) * (HAZARD_TYPE==='gas'?1.5:3),
           hazardPos.z + Math.cos(t*0.8) * r
         );
-        p.material.opacity = 0.4 + 0.4 * Math.sin(t*2);
-        p.visible = hazardActive;
+        p.material.opacity = 0.3 + 0.4 * Math.abs(Math.sin(t*2));
       });
-    } else {
-      fireParticles.forEach(p => p.visible = false);
+    }
+
+    // Check completion
+    const allDone = agents.every(a => a.evacuated || a.casualty);
+    if (allDone && simPhase === 'evacuating') {
+      simPhase = 'done';
+      simComplete = true;
+      updatePhaseUI();
+      document.getElementById('status-badge').className = 'complete';
+      document.getElementById('status-badge').textContent = '✓ COMPLETE';
+
+      const pct = Math.round(evacuatedCount/AGENT_COUNT*100);
+      document.getElementById('comp-safe').textContent = evacuatedCount;
+      document.getElementById('comp-cas').textContent = casualtyCount;
+      const mins = Math.floor(simTime/60), secs = Math.floor(simTime%60);
+      document.getElementById('comp-time').textContent = `${mins}:${String(secs).padStart(2,'0')}`;
+      document.getElementById('complete-sub').textContent = `${pct}% survival rate`;
+      document.getElementById('completion-overlay').classList.add('visible');
+      log(`✓ Evacuation complete — ${evacuatedCount}/${AGENT_COUNT} survived`, 'good');
     }
   }
 
@@ -868,66 +1707,117 @@ function animate() {
     ex.ring.scale.setScalar(0.9 + 0.15 * Math.abs(Math.sin(exitPulseT * 2)));
   });
 
-  updateHUD();
+  updateHUD(inDangerCount);
   drawMinimap();
   renderer.render(scene, camera);
 }
 
-animate();
+// ═══════════════════════════════════════════════════════════════
+//  LAUNCH
+// ═══════════════════════════════════════════════════════════════
+function launchSim() {
+  // Read config
+  AGENT_COUNT = configAgents;
+  PANIC_LEVEL = configPanic;
+  EXIT_COUNT = configExits;
+  autoHazardDelay = configDelay;
+  HAZARD_TYPE = selectedHazard;
 
-// ─── CONTROLS ──────────────────────────────────────────────────────────────────
+  // Hide setup
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('hud').style.display = 'block';
+  document.getElementById('completion-overlay').classList.remove('visible');
+
+  // Init
+  initScene();
+  buildLayout(selectedPreset, Math.min(EXIT_COUNT, selectedPreset.defaultExits.length));
+  buildHazard(HAZARD_TYPE);
+  spawnAgents(AGENT_COUNT, PANIC_LEVEL);
+
+  simRunning = true;
+  simTime = 0;
+  evacuatedCount = 0;
+  casualtyCount = 0;
+  simComplete = false;
+  simPhase = 'standby';
+  lastEvacLogged = 0;
+  lastCasLogged = 0;
+
+  document.getElementById('struct-name-display').textContent = selectedPreset.name.toUpperCase();
+  document.getElementById('event-log').innerHTML = '';
+  document.getElementById('btn-play').textContent = '❚❚ Pause';
+  document.getElementById('btn-play').className = 'ctrl-btn active';
+  document.getElementById('btn-hazard').textContent = '⚠ Trigger Hazard';
+  document.getElementById('btn-hazard').className = 'ctrl-btn danger';
+  document.getElementById('status-badge').className = 'standby';
+  document.getElementById('status-badge').textContent = '● STANDBY';
+  document.getElementById('hazard-info').classList.remove('visible');
+  document.getElementById('speed-display').textContent = simSpeed + '×';
+
+  updatePhaseUI();
+
+  log(`Simulation loaded: ${selectedPreset.name}`, '');
+  log(`${AGENT_COUNT} agents spawned (panic level ${PANIC_LEVEL})`, '');
+  log(`${Math.min(EXIT_COUNT, selectedPreset.defaultExits.length)} exit zones active`, 'good');
+  log(`Hazard type: ${HAZARD_TYPE.toUpperCase()} — awaiting trigger`, 'warn');
+
+  if (autoHazardDelay > 0) {
+    log(`Auto-hazard in ${autoHazardDelay}s`, 'warn');
+    autoHazardTimer = setTimeout(triggerHazard, autoHazardDelay * 1000);
+  }
+
+  lastTime = performance.now();
+  animRunning = true;
+  animate();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CONTROLS
+// ═══════════════════════════════════════════════════════════════
 document.getElementById('btn-play').addEventListener('click', function() {
   simRunning = !simRunning;
   this.textContent = simRunning ? '❚❚ Pause' : '▶ Play';
   this.className = simRunning ? 'ctrl-btn active' : 'ctrl-btn';
 });
 
+document.getElementById('btn-hazard').addEventListener('click', function() {
+  if (!hazardActive) triggerHazard();
+  else clearHazard();
+});
+
 document.getElementById('btn-reset').addEventListener('click', () => {
-  location.reload();
+  animRunning = false;
+  if (autoHazardTimer) clearTimeout(autoHazardTimer);
+  launchSim();
+});
+
+document.getElementById('btn-setup').addEventListener('click', () => {
+  animRunning = false;
+  if (autoHazardTimer) clearTimeout(autoHazardTimer);
+  document.getElementById('setup-screen').style.display = 'flex';
+  document.getElementById('hud').style.display = 'none';
+});
+
+document.getElementById('btn-again').addEventListener('click', () => {
+  animRunning = false;
+  if (autoHazardTimer) clearTimeout(autoHazardTimer);
+  launchSim();
 });
 
 document.getElementById('btn-faster').addEventListener('click', () => {
-  simSpeed = Math.min(5, simSpeed + 0.5);
+  simSpeed = Math.min(6, simSpeed + 0.5);
   document.getElementById('speed-display').textContent = simSpeed + '×';
-  log(`Speed set to ${simSpeed}×`);
+  log(`Speed: ${simSpeed}×`);
 });
 
 document.getElementById('btn-slower').addEventListener('click', () => {
   simSpeed = Math.max(0.5, simSpeed - 0.5);
   document.getElementById('speed-display').textContent = simSpeed + '×';
-  log(`Speed set to ${simSpeed}×`);
-});
-
-document.getElementById('btn-hazard').addEventListener('click', function() {
-  if (!hazardActive) {
-    hazardActive = true;
-    hazardRadius = 0.1;
-    hazardMesh.position.set(hazardPos.x, getTerrainHeight(hazardPos.x, hazardPos.z) + 1, hazardPos.z);
-    hazardMesh.visible = true;
-    document.getElementById('alert-banner').classList.add('visible');
-    log('⚠ HAZARD TRIGGERED — agents rerouting!', 'danger');
-    this.textContent = '✕ Clear Hazard';
-  } else {
-    hazardActive = false;
-    hazardRadius = 0;
-    hazardMesh.visible = false;
-    document.getElementById('alert-banner').classList.remove('visible');
-    log('Hazard cleared', 'warn');
-    this.textContent = '⚠ Trigger Hazard';
-    agents.forEach(a => {
-      if (!a.evacuated) {
-        let nearest = exits[0], nDist = Infinity;
-        exits.forEach(ex => {
-          const d = a.pos.distanceTo(ex.pos); if (d < nDist) { nDist = d; nearest = ex; }
-        });
-        a.target = nearest;
-        a.inDanger = false;
-      }
-    });
-  }
+  log(`Speed: ${simSpeed}×`);
 });
 
 window.addEventListener('resize', () => {
+  if (!renderer) return;
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
